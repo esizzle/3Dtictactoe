@@ -44,6 +44,26 @@ function main() {
         });
 
     });
+    const triangleData = {
+        "triangles": [
+          {
+            "material": {
+              "ambient": [0.1, 0.1, 0.1],
+              "diffuse": [0.6, 0.4, 0.4],
+              "specular": [0.3, 0.3, 0.3],
+              "n": 11
+            },
+            "vertices": [
+              [0.1, 0.3, 0.75],
+              [0.25, 0.6, 0.75],
+              [0.4, 0.3, 0.75]
+            ],
+            "triangles": [[0, 1, 2]]
+          }
+        ]
+      };
+      doDrawing(gl, canvas, triangleData.triangles);
+      
 }
 
 function doDrawing(gl, canvas, inputTriangles) {
@@ -128,6 +148,10 @@ function startRendering(gl, state) {
  * @param {number} deltaTime Time between each rendering call
  */
 function drawScene(gl, deltaTime, state) {
+    // Define triangles in JSON format
+
+  // Pass the parsed JSON to the drawing function
+  
     // Set clear colour
     // This is a Red-Green-Blue-Alpha colour
     // See https://en.wikipedia.org/wiki/RGB_color_model
