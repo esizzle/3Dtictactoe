@@ -12,6 +12,11 @@ function main() {
     // Find the canavas tag in the HTML document
     const canvas = document.querySelector("#assignmentCanvas");
 
+    
+    // Set the canvas width and height (this can be adjusted to any size you want)
+    canvas.width = window.innerWidth; // Set to window width, for example
+    canvas.height = window.innerHeight; // Set to window height, for example
+
     // Initialize the WebGL2 context
     var gl = canvas.getContext("webgl2");
 
@@ -21,6 +26,10 @@ function main() {
             'Check to see you are using a <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API#WebGL_2_2" class="alert-link">modern browser</a>.');
         return;
     }
+
+    // Set WebGL viewport to match canvas size
+    gl.viewport(0, 0, canvas.width, canvas.height);
+
 
     // Hook up the button
     const fileUploadButton = document.querySelector("#fileUploadButton");
@@ -44,7 +53,242 @@ function main() {
         });
 
     });
+    const framework = {
+        beams: []
+      };
+      
+      const gridSize = 3; // 3x3x3 grid
+      const spacing = 1.5; // Distance between grid points
+      const thickness = 0.2; // Thickness of the beams
+      
+      // Function to create a cuboid beam between two points
+      function createCuboid(x1, y1, z1, x2, y2, z2, thickness, color) {
+        const halfThickness = thickness / 2;
+      
+        // Vector for direction of the beam
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const dz = z2 - z1;
+      
+        // Normalize direction to find offsets for thickness
+        const length = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        const ux = dx / length;
+        const uy = dy / length;
+        const uz = dz / length;
+      
+        // Perpendicular offsets for thickness (cross product logic for 3D)
+        const offsetX = halfThickness * (uy || 1); // Use Y-axis for cross-product
+        const offsetY = halfThickness * (uz || 1); // Use Z-axis for cross-product
+        const offsetZ = halfThickness * (ux || 1); // Use X-axis for cross-product
+      
+        return {
+          material: { diffuse: color },
+          vertices: [
+            [x1 - offsetX, y1 - offsetY, z1 - offsetZ], // Bottom-left start
+            [x1 + offsetX, y1 + offsetY, z1 + offsetZ], // Bottom-right start
+            [x2 + offsetX, y2 + offsetY, z2 + offsetZ], // Bottom-right end
+            [x2 - offsetX, y2 - offsetY, z2 - offsetZ], // Bottom-left end
+            [x1 - offsetX, y1 - offsetY, z1 + offsetZ], // Top-left start
+            [x1 + offsetX, y1 + offsetY, z1 + offsetZ], // Top-right start
+            [x2 + offsetX, y2 + offsetY, z2 + offsetZ], // Top-right end
+            [x2 - offsetX, y2 - offsetY, z2 + offsetZ], // Top-left end
+          ],
+          triangles: [
+            [0, 1, 2], [0, 2, 3], // Bottom face
+            [4, 5, 6], [4, 6, 7], // Top face
+            [0, 1, 5], [0, 5, 4], // Front face
+            [2, 3, 7], [2, 7, 6], // Back face
+            [0, 3, 7], [0, 7, 4], // Left face
+            [1, 2, 6], [1, 6, 5], // Right face
+          ]
+        };
+      }
+      
+      // Generate the 3D grid framework
+      for (let x = 0; x <= gridSize; x++) {
+        for (let y = 0; y <= gridSize; y++) {
+          for (let z = 0; z <= gridSize; z++) {
+            // Add horizontal beams (X-axis)
+            if (x < gridSize) {
+              framework.beams.push(
+                createCuboid(
+                  x * spacing, y * spacing, z * spacing,
+                  (x + 1) * spacing, y * spacing, z * spacing,
+                  thickness,
+                  [0.4, 0.2, 0.1]
+                )
+              );
+            }
+      
+            // Add vertical beams (Y-axis)
+            if (y < gridSize) {
+              framework.beams.push(
+                createCuboid(
+                  x * spacing, y * spacing, z * spacing,
+                  x * spacing, (y + 1) * spacing, z * spacing,
+                  thickness,
+                  [0.4, 0.2, 0.1]
+                )
+              );
+            }
+      
+            // Add depth beams (Z-axis)
+            if (z < gridSize) {
+              framework.beams.push(
+                createCuboid(
+                  x * spacing, y * spacing, z * spacing,
+                  x * spacing, y * spacing, (z + 1) * spacing,
+                  thickness,
+                  [0.4, 0.2, 0.1]
+                )
+              );
+            }
+          }
+        }
+      }
+      
+     
+      
+    
+      
+      doDrawing(gl, canvas, framework.beams);
+      
 }
+// Skybox setup function
+function setupSkybox(gl) {
+    // Skybox cube vertices
+    const skyboxVertices = new Float32Array([
+        -1, -1, -1,  1, -1, -1,  -1,  1, -1, // Front face
+        1, -1, -1,  1,  1, -1,  -1,  1, -1,
+
+        -1, -1,  1,  -1,  1,  1,  1, -1,  1, // Back face
+        1, -1,  1,  -1,  1,  1,  1,  1,  1,
+
+        -1,  1, -1,  -1,  1,  1,  1,  1, -1, // Top face
+        1,  1, -1,  -1,  1,  1,  1,  1,  1,
+
+        -1, -1, -1,  1, -1, -1,  -1, -1,  1, // Bottom face
+        1, -1, -1,  1, -1,  1,  -1, -1,  1,
+
+        -1, -1, -1,  -1, -1,  1,  -1,  1, -1, // Left face
+        -1, -1,  1,  -1,  1,  1,  -1,  1, -1,
+
+        1, -1, -1,  1,  1, -1,  1, -1,  1, // Right face
+        1, -1,  1,  1,  1,  1,  1,  1, -1,
+    ]);
+
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
+
+    return buffer;
+}
+
+// Load skybox texture
+function loadSkyboxTexture(gl) {
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+
+    const faceInfos = [
+        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'posx.jpg' },
+        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'negx.jpg' },
+        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'posy.jpg' },
+        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'negy.jpg' },
+        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'posz.jpg' },
+        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'negz.jpg' },
+    ];
+
+    faceInfos.forEach(({ target, url }) => {
+        const level = 0;
+        const internalFormat = gl.RGBA;
+        const width = 512;
+        const height = 512;
+        const format = gl.RGBA;
+        const type = gl.UNSIGNED_BYTE;
+
+        // Set up placeholders
+        gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
+
+        // Load image
+        const image = new Image();
+        image.src = url;
+        image.onload = () => {
+            gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
+            gl.texImage2D(target, level, internalFormat, format, type, image);
+            gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
+        };
+    });
+
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    return texture;
+}
+
+// Skybox shader program
+function createSkyboxProgram(gl) {
+    const vertexShaderSource = `
+        attribute vec3 a_position;
+        varying vec3 v_texCoord;
+
+        uniform mat4 u_viewMatrix;
+        uniform mat4 u_projectionMatrix;
+
+        void main() {
+            v_texCoord = a_position;
+            gl_Position = u_projectionMatrix * u_viewMatrix * vec4(a_position, 1.0);
+            gl_Position.z = gl_Position.w; // Push depth to far plane
+        }
+    `;
+
+    const fragmentShaderSource = `
+        precision mediump float;
+        varying vec3 v_texCoord;
+
+        uniform samplerCube u_skybox;
+
+        void main() {
+            gl_FragColor = textureCube(u_skybox, v_texCoord);
+        }
+    `;
+
+    return initShaderProgram(gl, vertexShaderSource, fragmentShaderSource);
+}
+
+// Render skybox
+function renderSkybox(gl, skyboxProgram, skyboxBuffer, cubemapTexture, viewMatrix, projectionMatrix) {
+    gl.useProgram(skyboxProgram);
+
+    // Bind buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, skyboxBuffer);
+    const positionLocation = gl.getAttribLocation(skyboxProgram, 'a_position');
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
+
+    // Modify the view matrix to remove translation
+    const viewWithoutTranslation = mat4.clone(viewMatrix);
+    viewWithoutTranslation[12] = viewWithoutTranslation[13] = viewWithoutTranslation[14] = 0;
+
+    const viewMatrixLocation = gl.getUniformLocation(skyboxProgram, 'u_viewMatrix');
+    const projectionMatrixLocation = gl.getUniformLocation(skyboxProgram, 'u_projectionMatrix');
+
+    gl.uniformMatrix4fv(viewMatrixLocation, false, viewWithoutTranslation);
+    gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+
+    // Bind texture
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemapTexture);
+    const skyboxLocation = gl.getUniformLocation(skyboxProgram, 'u_skybox');
+    gl.uniform1i(skyboxLocation, 0);
+
+    // Draw skybox
+    gl.depthFunc(gl.LEQUAL); // Ensure skybox depth doesn't overwrite scene
+    gl.drawArrays(gl.TRIANGLES, 0, 36);
+    gl.depthFunc(gl.LESS); // Reset depth function
+}
+
 
 function doDrawing(gl, canvas, inputTriangles) {
     // Create a state for our scene
@@ -128,6 +372,10 @@ function startRendering(gl, state) {
  * @param {number} deltaTime Time between each rendering call
  */
 function drawScene(gl, deltaTime, state) {
+    // Define triangles in JSON format
+
+  // Pass the parsed JSON to the drawing function
+  
     // Set clear colour
     // This is a Red-Green-Blue-Alpha colour
     // See https://en.wikipedia.org/wiki/RGB_color_model
@@ -226,7 +474,22 @@ function setupKeypresses(state) {
                         mat4.multiply(object.model.rotation, rotationY, object.model.rotation);
                     } else {
                         // TODO Rotate camera around Y
-                        state.camera.center[0] += 0.05;
+                        const rotationMatrixA = mat4.create();
+                    const worldUpA = vec3.fromValues(0, 1, 0);
+                    mat4.rotate(rotationMatrixA, rotationMatrixA, 0.05, worldUpA);
+
+                    const tempLookDirA = vec3.create();
+                    vec3.subtract(tempLookDirA, state.camera.center, state.camera.position);
+                    vec3.transformMat4(tempLookDirA, tempLookDirA, rotationMatrixA);
+                    vec3.normalize(tempLookDirA, tempLookDirA);
+                    vec3.add(state.camera.center, state.camera.position, tempLookDirA);
+
+                    const tempRightA = vec3.create();
+                    vec3.cross(tempRightA, tempLookDirA, state.camera.up);
+                    vec3.normalize(state.camera.right, tempRightA);
+
+                    vec3.cross(state.camera.up, state.camera.right, tempLookDirA);
+                    vec3.normalize(state.camera.up, state.camera.up);
                         
 
                     }
@@ -250,7 +513,22 @@ function setupKeypresses(state) {
                         mat4.multiply(object.model.rotation, rotationY, object.model.rotation);
                     } else {
                         // TODO Rotate camera around Y (other direction)
-                        state.camera.center[0] -= 0.05;
+                        const rotationMatrixD = mat4.create();
+                    const worldUpD = vec3.fromValues(0, 1, 0);
+                    mat4.rotate(rotationMatrixD, rotationMatrixD, -0.05, worldUpD);
+
+                    const tempLookDirD = vec3.create();
+                    vec3.subtract(tempLookDirD, state.camera.center, state.camera.position);
+                    vec3.transformMat4(tempLookDirD, tempLookDirD, rotationMatrixD);
+                    vec3.normalize(tempLookDirD, tempLookDirD);
+                    vec3.add(state.camera.center, state.camera.position, tempLookDirD);
+
+                    const tempRightD = vec3.create();
+                    vec3.cross(tempRightD, tempLookDirD, state.camera.up);
+                    vec3.normalize(state.camera.right, tempRightD);
+
+                    vec3.cross(state.camera.up, state.camera.right, tempLookDirD);
+                    vec3.normalize(state.camera.up, state.camera.up);
                     }
                 } else {
                     if (state.hasSelected) {
@@ -271,9 +549,8 @@ function setupKeypresses(state) {
                         mat4.rotateX(rotationX, rotationX, 0.1);
                         mat4.multiply(object.model.rotation, rotationX, object.model.rotation);
                     } else {
-                        // TODO: Rotate camera about X axis (pitch)
-                        state.camera.center[1] += 0.01;
-                    }
+                        
+                        }
                 } else {
                     if (state.hasSelected) {
                         // TODO: Move selected object along Z axis
@@ -294,7 +571,7 @@ function setupKeypresses(state) {
                         mat4.multiply(object.model.rotation, rotationX, object.model.rotation);
                     } else {
                         // TODO: Rotate camera about X axis (pitch)
-                        state.camera.center[1] -= 0.01;
+                        
                     }
                 } else {
                     if (state.hasSelected) {
