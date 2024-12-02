@@ -315,6 +315,24 @@ const redPyramidTemplate = {
     ]
 };
 
+// define  highlight cube
+const highlight_cube = {
+    name: "highlighted cube",
+
+    material: {
+        ambient: [0.3, 0.3, 0.1],
+        diffuse: [0.8, 0.8, 0.1],
+        specular: [0.3, 0.3, 0.3],
+        n: 10
+    },
+    vertices: [
+        [0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0], [0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]
+    ],
+    triangles: [
+        [0, 1, 2], [1, 3, 2], [2, 3, 6], [3, 7, 6], [4, 6, 7], [7, 5, 4], [4, 5, 0], [5, 1, 0], [3 ,1, 7], [1, 5, 7], [6, 4, 0], [0, 2, 6]
+    ]
+};
+
 // Create the board slots
 const boardSlots = [];
 const gridSize = 3; // 3x3x3 grid
@@ -367,6 +385,22 @@ function spawnPyramid(gl,canvas, beams) {
     doDrawing(gl,canvas, beams)
 }
 
+function highlightIndex(gl,canvas,beams) {
+    const currentSlot = boardSlots[currentSlotIndex];
+
+    cube = JSON.parse(JSON.stringify(highlight_cube));
+    cube.vertices = cube.vertices.map(vertex => [
+        vertex[0] + currentSlot.position[0] + 0.25,
+        vertex[1] + currentSlot.position[1],
+        vertex[2] + currentSlot.position[2] + 0.25
+    ]);
+
+    beams.push(cube)
+
+    doDrawing(gl,canvas, beams)
+
+
+}
 
 
 function doDrawing(gl, canvas, inputTriangles) {
@@ -550,6 +584,7 @@ function setupKeypresses(gl,state, canvas, beams) {
         event.preventDefault();
 
         console.log("Selected Slot Index:", currentSlotIndex);
+        
         switch (event.code) {
             case "KeyA":
                 if (event.getModifierState("Shift")) {
@@ -717,24 +752,28 @@ function setupKeypresses(gl,state, canvas, beams) {
                     }
                 }
                 break;
-                case "ArrowUp":
-                currentSlotIndex = (currentSlotIndex - rowSize + boardSlots.length) % boardSlots.length;
-                break;
-            case "ArrowDown":
-                currentSlotIndex = (currentSlotIndex + rowSize) % boardSlots.length;
-                break;
             case "ArrowLeft":
-                currentSlotIndex = (currentSlotIndex - 1 + boardSlots.length) % boardSlots.length;
+                beams = beams.filter(object => {
+                    return object.name !== "highlighted cube";
+                }); 
+                currentSlotIndex -= 1;
+                if (currentSlotIndex == -1) {
+                    currentSlotIndex = 26;
+                }
+
+                highlightIndex(gl,canvas,beams);
                 break;
             case "ArrowRight":
-                currentSlotIndex = (currentSlotIndex + 1) % boardSlots.length;
+                beams = beams.filter(object => {
+                    return object.name !== "highlighted cube";
+                }); 
+                currentSlotIndex += 1;
+                if (currentSlotIndex == 27) {
+                    currentSlotIndex = 0;
+                }
+                highlightIndex(gl,canvas,beams);
                 break;
-            case "PageUp":
-                currentSlotIndex = (currentSlotIndex - layerSize + boardSlots.length) % boardSlots.length;
-                break;
-            case "PageDown":
-                currentSlotIndex = (currentSlotIndex + layerSize) % boardSlots.length;
-                break;
+          
             case "Space":
                 spawnPyramid(gl,canvas,beams); 
                 break;
