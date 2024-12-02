@@ -31,29 +31,6 @@ function main() {
     // Set WebGL viewport to match canvas size
     gl.viewport(0, 0, canvas.width, canvas.height);
 
-
-    // Hook up the button
-    const fileUploadButton = document.querySelector("#fileUploadButton");
-    fileUploadButton.addEventListener("click", () => {
-        console.log("Submitting file...");
-        let fileInput = document.getElementById('inputFile');
-        let files = fileInput.files;
-        let url = URL.createObjectURL(files[0]);
-
-        fetch(url, {
-            mode: 'no-cors' // 'cors' by default
-        }).then(res => {
-            return res.text();
-        }).then(data => {
-            var inputTriangles = JSON.parse(data);
-
-            doDrawing(gl, canvas, inputTriangles);
-
-        }).catch((e) => {
-            console.error(e);
-        });
-
-    });
     const framework = {
         beams: []
       };
@@ -83,6 +60,7 @@ function main() {
         const offsetZ = halfThickness * (ux || 1); // Use X-axis for cross-product
       
         return {
+          name: "Board",
           material: { diffuse: color },
           vertices: [
             [x1 - offsetX, y1 - offsetY, z1 - offsetZ], // Bottom-left start
@@ -761,8 +739,11 @@ function setupKeypresses(gl,state, canvas, beams) {
                 spawnPyramid(gl,canvas,beams); 
                 break;
                 case "KeyR":
-                beams = beams.filter(object => {
+                    
+                    
+                    beams = beams.filter(object => {
                     return object.name !== "Blue Pyramid" && object.name !== "Red Pyramid";
+                    
                 }); 
                 console.log("All pyramids have been removed!");
                 doDrawing(gl, canvas, beams); 
