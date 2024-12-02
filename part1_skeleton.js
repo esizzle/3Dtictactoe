@@ -165,7 +165,133 @@ function main() {
             [0, 2, 3]  // Second triangle
         ]
     };
-    framework.beams.push(floorObject);
+    
+
+    const frontWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.6, 0.2, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [-10.0, -0.1, -10.0], // Bottom-left
+            [10.0, -0.1, -10.0],  // Bottom-right
+            [10.0, 2.0, -10.0],   // Top-right
+            [-10.0, 2.0, -10.0]   // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Back wall
+    const backWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.6, 0.2, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [-10.0, -0.1, 10.0],  // Bottom-left
+            [10.0, -0.1, 10.0],   // Bottom-right
+            [10.0, 2.0, 10.0],    // Top-right
+            [-10.0, 2.0, 10.0]    // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Left wall
+    const leftWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.2, 0.6, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [-10.0, -0.1, -10.0], // Bottom-left
+            [-10.0, -0.1, 10.0],  // Bottom-right
+            [-10.0, 2.0, 10.0],   // Top-right
+            [-10.0, 2.0, -10.0]   // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Right wall
+    const rightWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.2, 0.6, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [10.0, -0.1, -10.0],  // Bottom-left
+            [10.0, -0.1, 10.0],   // Bottom-right
+            [10.0, 2.0, 10.0],    // Top-right
+            [10.0, 2.0, -10.0]    // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Push walls to framework.beams
+    framework.beams.push(floorObject,frontWall, backWall, leftWall, rightWall);
+
+    const cornerCubePositions = [
+    [-10.0, -0.1, -10.0],  // Front-left
+    [10.0, -0.1, -10.0],   // Front-right
+    [-10.0, -0.1, 10.0],   // Back-left
+    [10.0, -0.1, 10.0]     // Back-right
+];
+
+const cubeSize = 5;  
+    cornerCubePositions.forEach(position => {
+        const cubeObject = {
+            material: {
+                ambient: [0.2, 0.2, 0.2],
+                diffuse: [0.7, 0.2, 0.9],
+                specular: [0.1, 0.1, 0.1],
+                n: 10
+            },
+            vertices: [
+                [-0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], // Front face
+                [-0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], // Back face
+                [-0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [-0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], // Left face
+                [0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], // Right face
+                [-0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], // Bottom face
+                [-0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize]  // Top face
+            ],
+            triangles: [
+                [0, 1, 2], [0, 2, 3], [4, 5, 6], [4, 6, 7], // Front and back faces
+                [8, 9, 10], [8, 10, 11], [12, 13, 14], [12, 14, 15], // Left and right faces
+                [16, 17, 18], [16, 18, 19], [20, 21, 22], [20, 22, 23]  // Bottom and top faces
+            ]
+        };
+
+        // Adjust the cube position by the corner
+        cubeObject.vertices = cubeObject.vertices.map(v => [
+            v[0] + position[0],
+            v[1] + position[1],
+            v[2] + position[2]
+        ]);
+
+        framework.beams.push(cubeObject);  // Add each cube to the scene
+    });
+
+
+
       
      
       
@@ -174,140 +300,8 @@ function main() {
       doDrawing(gl, canvas, framework.beams);
       
 }
-// Skybox setup function
-function setupSkybox(gl) {
-    // Skybox cube vertices
-    const skyboxVertices = new Float32Array([
-        -1, -1, -1,  1, -1, -1,  -1,  1, -1, // Front face
-        1, -1, -1,  1,  1, -1,  -1,  1, -1,
 
-        -1, -1,  1,  -1,  1,  1,  1, -1,  1, // Back face
-        1, -1,  1,  -1,  1,  1,  1,  1,  1,
 
-        -1,  1, -1,  -1,  1,  1,  1,  1, -1, // Top face
-        1,  1, -1,  -1,  1,  1,  1,  1,  1,
-
-        -1, -1, -1,  1, -1, -1,  -1, -1,  1, // Bottom face
-        1, -1, -1,  1, -1,  1,  -1, -1,  1,
-
-        -1, -1, -1,  -1, -1,  1,  -1,  1, -1, // Left face
-        -1, -1,  1,  -1,  1,  1,  -1,  1, -1,
-
-        1, -1, -1,  1,  1, -1,  1, -1,  1, // Right face
-        1, -1,  1,  1,  1,  1,  1,  1, -1,
-    ]);
-
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
-
-    return buffer;
-}
-
-// Load skybox texture
-function loadSkyboxTexture(gl) {
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-
-    const faceInfos = [
-        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'posx.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'negx.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'posy.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'negy.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'posz.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'negz.jpg' },
-    ];
-
-    faceInfos.forEach(({ target, url }) => {
-        const level = 0;
-        const internalFormat = gl.RGBA;
-        const width = 512;
-        const height = 512;
-        const format = gl.RGBA;
-        const type = gl.UNSIGNED_BYTE;
-
-        // Set up placeholders
-        gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-
-        // Load image
-        const image = new Image();
-        image.src = url;
-        image.onload = () => {
-            gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-            gl.texImage2D(target, level, internalFormat, format, type, image);
-            gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-        };
-    });
-
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-    return texture;
-}
-
-// Skybox shader program
-function createSkyboxProgram(gl) {
-    const vertexShaderSource = `
-        attribute vec3 a_position;
-        varying vec3 v_texCoord;
-
-        uniform mat4 u_viewMatrix;
-        uniform mat4 u_projectionMatrix;
-
-        void main() {
-            v_texCoord = a_position;
-            gl_Position = u_projectionMatrix * u_viewMatrix * vec4(a_position, 1.0);
-            gl_Position.z = gl_Position.w; // Push depth to far plane
-        }
-    `;
-
-    const fragmentShaderSource = `
-        precision mediump float;
-        varying vec3 v_texCoord;
-
-        uniform samplerCube u_skybox;
-
-        void main() {
-            gl_FragColor = textureCube(u_skybox, v_texCoord);
-        }
-    `;
-
-    return initShaderProgram(gl, vertexShaderSource, fragmentShaderSource);
-}
-
-// Render skybox
-function renderSkybox(gl, skyboxProgram, skyboxBuffer, cubemapTexture, viewMatrix, projectionMatrix) {
-    gl.useProgram(skyboxProgram);
-
-    // Bind buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, skyboxBuffer);
-    const positionLocation = gl.getAttribLocation(skyboxProgram, 'a_position');
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-
-    // Modify the view matrix to remove translation
-    const viewWithoutTranslation = mat4.clone(viewMatrix);
-    viewWithoutTranslation[12] = viewWithoutTranslation[13] = viewWithoutTranslation[14] = 0;
-
-    const viewMatrixLocation = gl.getUniformLocation(skyboxProgram, 'u_viewMatrix');
-    const projectionMatrixLocation = gl.getUniformLocation(skyboxProgram, 'u_projectionMatrix');
-
-    gl.uniformMatrix4fv(viewMatrixLocation, false, viewWithoutTranslation);
-    gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-
-    // Bind texture
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemapTexture);
-    const skyboxLocation = gl.getUniformLocation(skyboxProgram, 'u_skybox');
-    gl.uniform1i(skyboxLocation, 0);
-
-    // Draw skybox
-    gl.depthFunc(gl.LEQUAL); // Ensure skybox depth doesn't overwrite scene
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
-    gl.depthFunc(gl.LESS); // Reset depth function
-}
 // Define the blue and red pyramid templates
 const bluePyramidTemplate = {
     name: "Blue Pyramid",
@@ -402,8 +396,8 @@ function doDrawing(gl, canvas, inputTriangles) {
 
     var state = {
         camera: {
-            position: vec3.fromValues(0.5, 0.5, -0.5),
-            center: vec3.fromValues(0.5, 0.5, 0.0),
+            position: vec3.fromValues(2.5, 5, -5),
+            center: vec3.fromValues(2.5, 2.5, 0),
             up: vec3.fromValues(0.0, 1.0, 0.0),
         },
         objects: [],
