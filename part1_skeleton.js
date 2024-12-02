@@ -1,3 +1,4 @@
+
 main();
 
 /************************************
@@ -307,6 +308,93 @@ function renderSkybox(gl, skyboxProgram, skyboxBuffer, cubemapTexture, viewMatri
     gl.drawArrays(gl.TRIANGLES, 0, 36);
     gl.depthFunc(gl.LESS); // Reset depth function
 }
+// Define the blue and red pyramid templates
+const bluePyramidTemplate = {
+    name: "Blue Pyramid",
+    
+    material: {
+        ambient: [0.1, 0.1, 0.3],
+        diffuse: [0.1, 0.1, 0.8],
+        specular: [0.3, 0.3, 0.3],
+        n: 10
+    },
+    vertices: [
+        [0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1], [0.5, 1, 0.5]
+    ],
+    triangles: [
+        [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4], [0, 1, 2], [0, 2, 3]
+    ]
+};
+
+const redPyramidTemplate = {
+    name: "Red Pyramid",
+
+    material: {
+        ambient: [0.3, 0.1, 0.1],
+        diffuse: [0.8, 0.1, 0.1],
+        specular: [0.3, 0.3, 0.3],
+        n: 10
+    },
+    vertices: [
+        [0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1], [0.5, 1, 0.5]
+    ],
+    triangles: [
+        [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4], [0, 1, 2], [0, 2, 3]
+    ]
+};
+
+// Create the board slots
+const boardSlots = [];
+const gridSize = 3; // 3x3x3 grid
+const slotSpacing = 1.5;
+
+for (let x = 0; x < gridSize; x++) {
+    for (let y = 0; y < gridSize; y++) {
+        for (let z = 0; z < gridSize; z++) {
+            boardSlots.push({
+                position: [x * slotSpacing, y * slotSpacing, z * slotSpacing],
+                occupied: null // Tracks whether the slot is occupied
+            });
+        }
+    }
+}
+
+// Add logic for spawning pyramids
+let currentSlotIndex = 0; // Tracks the selected slot
+let isBlueTurn = true; // Alternates between blue and red pyramids
+
+function spawnPyramid(gl,canvas, beams) {
+    const currentSlot = boardSlots[currentSlotIndex];
+
+    // Check if the slot is already occupied
+    if (currentSlot.occupied) {
+        console.log("Slot already occupied!");
+        return;
+    }
+
+    // Decide the pyramid type based on the turn
+    const pyramidTemplate = isBlueTurn ? bluePyramidTemplate : redPyramidTemplate;
+
+    // Clone the pyramid template and update its vertices to match the slot position
+    const pyramid = JSON.parse(JSON.stringify(pyramidTemplate));
+    pyramid.vertices = pyramid.vertices.map(vertex => [
+        vertex[0] + currentSlot.position[0] + 0.25,
+        vertex[1] + currentSlot.position[1],
+        vertex[2] + currentSlot.position[2] + 0.25
+    ]);
+
+    beams.push(pyramid)
+
+    // Mark the slot as occupied
+    currentSlot.occupied = isBlueTurn ? "Blue" : "Red";
+
+    // Switch turns
+    isBlueTurn = !isBlueTurn;
+
+    // Trigger a redraw
+    doDrawing(gl,canvas, beams)
+}
+
 
 
 function doDrawing(gl, canvas, inputTriangles) {
@@ -349,8 +437,9 @@ function doDrawing(gl, canvas, inputTriangles) {
 
         initBuffers(gl, state.objects[i], inputTriangles[i].vertices.flat(), inputTriangles[i].triangles.flat());
     }
+    setupKeypresses(gl, state,canvas, inputTriangles);
 
-    setupKeypresses(state);
+    
 
     //console.log(state)
 
@@ -475,14 +564,20 @@ function drawScene(gl, deltaTime, state) {
  * UI EVENTS
  ************************************/
 
-function setupKeypresses(state) {
+function setupKeypresses(gl,state, canvas, beams) {
+    const layerSize = 9; // 3x3 grid per layer
+    const rowSize = 3;
+
+    
+
+        
+    
     
     document.addEventListener("keydown", (event) => {
         console.log(event.code);
         event.preventDefault();
 
-        //console.log(state.hasSelected);
-        var object = state.objects[state.selectedIndex];
+        console.log("Selected Slot Index:", currentSlotIndex);
         switch (event.code) {
             case "KeyA":
                 if (event.getModifierState("Shift")) {
@@ -650,72 +745,38 @@ function setupKeypresses(state) {
                     }
                 }
                 break;
-            case "Space":
-                // TODO: Highlight
-                if (!state.hasSelected) {
-                    state.hasSelected = true;
-                    changeSelectionText(state.objects[state.selectedIndex].name);
-                    // TODO scale object here 
-                    object.model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                }
-                else {
-                    state.hasSelected = false;
-                    document.getElementById("selectionText").innerHTML = "Selection: None";
-                    // TODO scale back object here 
-                    object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                }
-
+                case "ArrowUp":
+                currentSlotIndex = (currentSlotIndex - rowSize + boardSlots.length) % boardSlots.length;
+                break;
+            case "ArrowDown":
+                currentSlotIndex = (currentSlotIndex + rowSize) % boardSlots.length;
                 break;
             case "ArrowLeft":
-                // Decreases object selected index value
-                if (state.hasSelected) {
-                    if (state.selectedIndex > 0) {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex--;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    else if (state.selectedIndex == 0) {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex = state.objects.length - 1;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    else {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex--;
-                    }
-                    //changes the text to the object that is selected
-                    changeSelectionText(state.objects[state.selectedIndex].name);
-                }
+                currentSlotIndex = (currentSlotIndex - 1 + boardSlots.length) % boardSlots.length;
                 break;
             case "ArrowRight":
-                // Increases object selected index value
-                if (state.hasSelected) {
-                    if (state.selectedIndex < state.objects.length - 1) {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex++;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    else {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex = 0;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    changeSelectionText(state.objects[state.selectedIndex].name);
-                }
+                currentSlotIndex = (currentSlotIndex + 1) % boardSlots.length;
+                break;
+            case "PageUp":
+                currentSlotIndex = (currentSlotIndex - layerSize + boardSlots.length) % boardSlots.length;
+                break;
+            case "PageDown":
+                currentSlotIndex = (currentSlotIndex + layerSize) % boardSlots.length;
+                break;
+            case "Space":
+                spawnPyramid(gl,canvas,beams); 
+                break;
+                case "KeyR":
+                beams = beams.filter(object => {
+                    return object.name !== "Blue Pyramid" && object.name !== "Red Pyramid";
+                }); 
+                console.log("All pyramids have been removed!");
+                doDrawing(gl, canvas, beams); 
                 break;
             default:
                 break;
         }
+
     });
 
 
@@ -957,3 +1018,7 @@ function calculateCentroid(vertices) {
     return center;
 
 }
+
+
+
+
