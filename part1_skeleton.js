@@ -146,6 +146,25 @@ function main() {
           }
         }
       }
+      const floorObject = {
+        material: {
+            ambient: [0.02, 0.02, 0.1],
+            diffuse: [0.02, 0.02, 0.1],
+            specular: [0, 0, 0],
+            n: 1
+        },
+        vertices: [
+            [-10.0, -0.1, -10.0],  // Bottom-left
+            [10.0, -0.1, -10.0],   // Bottom-right
+            [10.0, -0.1, 10.0],    // Top-right
+            [-10.0, -0.1, 10.0]    // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    framework.beams.push(floorObject);
       
      
       
@@ -618,9 +637,16 @@ function setupKeypresses(state) {
                         // TODO : move selected object along Y axis 
                         object.model.position[1] -= 0.05;
                     } else {
-                        // TODO: move camera along Y axis
+                       if (state.camera.position[1] < 0.5){
+                        state.camera.position[1] = 0.5;
+                        state.camera.center[1] = 0.5;
+                       } else{
                         state.camera.position[1] -= 0.05;
                         state.camera.center[1] -= 0.05;
+                       }
+                       
+                        // TODO: move camera along Y axis
+                        
                     }
                 }
                 break;
