@@ -1,3 +1,4 @@
+
 main();
 
 /************************************
@@ -146,6 +147,151 @@ function main() {
           }
         }
       }
+      const floorObject = {
+        material: {
+            ambient: [0.02, 0.02, 0.1],
+            diffuse: [0.02, 0.02, 0.1],
+            specular: [0, 0, 0],
+            n: 1
+        },
+        vertices: [
+            [-10.0, -0.1, -10.0],  // Bottom-left
+            [10.0, -0.1, -10.0],   // Bottom-right
+            [10.0, -0.1, 10.0],    // Top-right
+            [-10.0, -0.1, 10.0]    // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+
+    const frontWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.6, 0.2, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [-10.0, -0.1, -10.0], // Bottom-left
+            [10.0, -0.1, -10.0],  // Bottom-right
+            [10.0, 2.0, -10.0],   // Top-right
+            [-10.0, 2.0, -10.0]   // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Back wall
+    const backWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.6, 0.2, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [-10.0, -0.1, 10.0],  // Bottom-left
+            [10.0, -0.1, 10.0],   // Bottom-right
+            [10.0, 2.0, 10.0],    // Top-right
+            [-10.0, 2.0, 10.0]    // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Left wall
+    const leftWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.2, 0.6, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [-10.0, -0.1, -10.0], // Bottom-left
+            [-10.0, -0.1, 10.0],  // Bottom-right
+            [-10.0, 2.0, 10.0],   // Top-right
+            [-10.0, 2.0, -10.0]   // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Right wall
+    const rightWall = {
+        material: {
+            ambient: [0.1, 0.1, 0.1],
+            diffuse: [0.2, 0.6, 0.2],
+            specular: [0.3, 0.3, 0.3],
+            n: 10
+        },
+        vertices: [
+            [10.0, -0.1, -10.0],  // Bottom-left
+            [10.0, -0.1, 10.0],   // Bottom-right
+            [10.0, 2.0, 10.0],    // Top-right
+            [10.0, 2.0, -10.0]    // Top-left
+        ],
+        triangles: [
+            [0, 1, 2], // First triangle
+            [0, 2, 3]  // Second triangle
+        ]
+    };
+    
+    // Push walls to framework.beams
+    framework.beams.push(floorObject,frontWall, backWall, leftWall, rightWall);
+
+    const cornerCubePositions = [
+    [-10.0, -0.1, -10.0],  // Front-left
+    [10.0, -0.1, -10.0],   // Front-right
+    [-10.0, -0.1, 10.0],   // Back-left
+    [10.0, -0.1, 10.0]     // Back-right
+];
+
+const cubeSize = 5;  
+    cornerCubePositions.forEach(position => {
+        const cubeObject = {
+            material: {
+                ambient: [0.2, 0.2, 0.2],
+                diffuse: [0.7, 0.2, 0.9],
+                specular: [0.1, 0.1, 0.1],
+                n: 10
+            },
+            vertices: [
+                [-0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], // Front face
+                [-0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], // Back face
+                [-0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [-0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], // Left face
+                [0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], // Right face
+                [-0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, -0.5 * cubeSize, 0.5 * cubeSize], // Bottom face
+                [-0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, -0.5 * cubeSize], [0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize], [-0.5 * cubeSize, 0.5 * cubeSize, 0.5 * cubeSize]  // Top face
+            ],
+            triangles: [
+                [0, 1, 2], [0, 2, 3], [4, 5, 6], [4, 6, 7], // Front and back faces
+                [8, 9, 10], [8, 10, 11], [12, 13, 14], [12, 14, 15], // Left and right faces
+                [16, 17, 18], [16, 18, 19], [20, 21, 22], [20, 22, 23]  // Bottom and top faces
+            ]
+        };
+
+        // Adjust the cube position by the corner
+        cubeObject.vertices = cubeObject.vertices.map(v => [
+            v[0] + position[0],
+            v[1] + position[1],
+            v[2] + position[2]
+        ]);
+
+        framework.beams.push(cubeObject);  // Add each cube to the scene
+    });
+
+
+
       
      
       
@@ -154,140 +300,95 @@ function main() {
       doDrawing(gl, canvas, framework.beams);
       
 }
-// Skybox setup function
-function setupSkybox(gl) {
-    // Skybox cube vertices
-    const skyboxVertices = new Float32Array([
-        -1, -1, -1,  1, -1, -1,  -1,  1, -1, // Front face
-        1, -1, -1,  1,  1, -1,  -1,  1, -1,
 
-        -1, -1,  1,  -1,  1,  1,  1, -1,  1, // Back face
-        1, -1,  1,  -1,  1,  1,  1,  1,  1,
 
-        -1,  1, -1,  -1,  1,  1,  1,  1, -1, // Top face
-        1,  1, -1,  -1,  1,  1,  1,  1,  1,
+// Define the blue and red pyramid templates
+const bluePyramidTemplate = {
+    name: "Blue Pyramid",
+    
+    material: {
+        ambient: [0.1, 0.1, 0.3],
+        diffuse: [0.1, 0.1, 0.8],
+        specular: [0.3, 0.3, 0.3],
+        n: 10
+    },
+    vertices: [
+        [0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1], [0.5, 1, 0.5]
+    ],
+    triangles: [
+        [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4], [0, 1, 2], [0, 2, 3]
+    ]
+};
 
-        -1, -1, -1,  1, -1, -1,  -1, -1,  1, // Bottom face
-        1, -1, -1,  1, -1,  1,  -1, -1,  1,
+const redPyramidTemplate = {
+    name: "Red Pyramid",
 
-        -1, -1, -1,  -1, -1,  1,  -1,  1, -1, // Left face
-        -1, -1,  1,  -1,  1,  1,  -1,  1, -1,
+    material: {
+        ambient: [0.3, 0.1, 0.1],
+        diffuse: [0.8, 0.1, 0.1],
+        specular: [0.3, 0.3, 0.3],
+        n: 10
+    },
+    vertices: [
+        [0, 0, 0], [1, 0, 0], [1, 0, 1], [0, 0, 1], [0.5, 1, 0.5]
+    ],
+    triangles: [
+        [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4], [0, 1, 2], [0, 2, 3]
+    ]
+};
 
-        1, -1, -1,  1,  1, -1,  1, -1,  1, // Right face
-        1, -1,  1,  1,  1,  1,  1,  1, -1,
+// Create the board slots
+const boardSlots = [];
+const gridSize = 3; // 3x3x3 grid
+const slotSpacing = 1.5;
+
+for (let x = 0; x < gridSize; x++) {
+    for (let y = 0; y < gridSize; y++) {
+        for (let z = 0; z < gridSize; z++) {
+            boardSlots.push({
+                position: [x * slotSpacing, y * slotSpacing, z * slotSpacing],
+                occupied: null // Tracks whether the slot is occupied
+            });
+        }
+    }
+}
+
+// Add logic for spawning pyramids
+let currentSlotIndex = 0; // Tracks the selected slot
+let isBlueTurn = true; // Alternates between blue and red pyramids
+
+function spawnPyramid(gl,canvas, beams) {
+    const currentSlot = boardSlots[currentSlotIndex];
+
+    // Check if the slot is already occupied
+    if (currentSlot.occupied) {
+        console.log("Slot already occupied!");
+        return;
+    }
+
+    // Decide the pyramid type based on the turn
+    const pyramidTemplate = isBlueTurn ? bluePyramidTemplate : redPyramidTemplate;
+
+    // Clone the pyramid template and update its vertices to match the slot position
+    const pyramid = JSON.parse(JSON.stringify(pyramidTemplate));
+    pyramid.vertices = pyramid.vertices.map(vertex => [
+        vertex[0] + currentSlot.position[0] + 0.25,
+        vertex[1] + currentSlot.position[1],
+        vertex[2] + currentSlot.position[2] + 0.25
     ]);
 
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, skyboxVertices, gl.STATIC_DRAW);
+    beams.push(pyramid)
 
-    return buffer;
+    // Mark the slot as occupied
+    currentSlot.occupied = isBlueTurn ? "Blue" : "Red";
+
+    // Switch turns
+    isBlueTurn = !isBlueTurn;
+
+    // Trigger a redraw
+    doDrawing(gl,canvas, beams)
 }
 
-// Load skybox texture
-function loadSkyboxTexture(gl) {
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-
-    const faceInfos = [
-        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_X, url: 'posx.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X, url: 'negx.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y, url: 'posy.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, url: 'negy.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z, url: 'posz.jpg' },
-        { target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, url: 'negz.jpg' },
-    ];
-
-    faceInfos.forEach(({ target, url }) => {
-        const level = 0;
-        const internalFormat = gl.RGBA;
-        const width = 512;
-        const height = 512;
-        const format = gl.RGBA;
-        const type = gl.UNSIGNED_BYTE;
-
-        // Set up placeholders
-        gl.texImage2D(target, level, internalFormat, width, height, 0, format, type, null);
-
-        // Load image
-        const image = new Image();
-        image.src = url;
-        image.onload = () => {
-            gl.bindTexture(gl.TEXTURE_CUBE_MAP, texture);
-            gl.texImage2D(target, level, internalFormat, format, type, image);
-            gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
-        };
-    });
-
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-    return texture;
-}
-
-// Skybox shader program
-function createSkyboxProgram(gl) {
-    const vertexShaderSource = `
-        attribute vec3 a_position;
-        varying vec3 v_texCoord;
-
-        uniform mat4 u_viewMatrix;
-        uniform mat4 u_projectionMatrix;
-
-        void main() {
-            v_texCoord = a_position;
-            gl_Position = u_projectionMatrix * u_viewMatrix * vec4(a_position, 1.0);
-            gl_Position.z = gl_Position.w; // Push depth to far plane
-        }
-    `;
-
-    const fragmentShaderSource = `
-        precision mediump float;
-        varying vec3 v_texCoord;
-
-        uniform samplerCube u_skybox;
-
-        void main() {
-            gl_FragColor = textureCube(u_skybox, v_texCoord);
-        }
-    `;
-
-    return initShaderProgram(gl, vertexShaderSource, fragmentShaderSource);
-}
-
-// Render skybox
-function renderSkybox(gl, skyboxProgram, skyboxBuffer, cubemapTexture, viewMatrix, projectionMatrix) {
-    gl.useProgram(skyboxProgram);
-
-    // Bind buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, skyboxBuffer);
-    const positionLocation = gl.getAttribLocation(skyboxProgram, 'a_position');
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
-
-    // Modify the view matrix to remove translation
-    const viewWithoutTranslation = mat4.clone(viewMatrix);
-    viewWithoutTranslation[12] = viewWithoutTranslation[13] = viewWithoutTranslation[14] = 0;
-
-    const viewMatrixLocation = gl.getUniformLocation(skyboxProgram, 'u_viewMatrix');
-    const projectionMatrixLocation = gl.getUniformLocation(skyboxProgram, 'u_projectionMatrix');
-
-    gl.uniformMatrix4fv(viewMatrixLocation, false, viewWithoutTranslation);
-    gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-
-    // Bind texture
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_CUBE_MAP, cubemapTexture);
-    const skyboxLocation = gl.getUniformLocation(skyboxProgram, 'u_skybox');
-    gl.uniform1i(skyboxLocation, 0);
-
-    // Draw skybox
-    gl.depthFunc(gl.LEQUAL); // Ensure skybox depth doesn't overwrite scene
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
-    gl.depthFunc(gl.LESS); // Reset depth function
-}
 
 
 function doDrawing(gl, canvas, inputTriangles) {
@@ -295,8 +396,8 @@ function doDrawing(gl, canvas, inputTriangles) {
 
     var state = {
         camera: {
-            position: vec3.fromValues(0.5, 0.5, -0.5),
-            center: vec3.fromValues(0.5, 0.5, 0.0),
+            position: vec3.fromValues(2.5, 5, -5),
+            center: vec3.fromValues(2.5, 2.5, 0),
             up: vec3.fromValues(0.0, 1.0, 0.0),
         },
         objects: [],
@@ -330,8 +431,9 @@ function doDrawing(gl, canvas, inputTriangles) {
 
         initBuffers(gl, state.objects[i], inputTriangles[i].vertices.flat(), inputTriangles[i].triangles.flat());
     }
+    setupKeypresses(gl, state,canvas, inputTriangles);
 
-    setupKeypresses(state);
+    
 
     //console.log(state)
 
@@ -456,14 +558,20 @@ function drawScene(gl, deltaTime, state) {
  * UI EVENTS
  ************************************/
 
-function setupKeypresses(state) {
+function setupKeypresses(gl,state, canvas, beams) {
+    const layerSize = 9; // 3x3 grid per layer
+    const rowSize = 3;
+
+    
+
+        
+    
     
     document.addEventListener("keydown", (event) => {
         console.log(event.code);
         event.preventDefault();
 
-        //console.log(state.hasSelected);
-        var object = state.objects[state.selectedIndex];
+        console.log("Selected Slot Index:", currentSlotIndex);
         switch (event.code) {
             case "KeyA":
                 if (event.getModifierState("Shift")) {
@@ -618,78 +726,51 @@ function setupKeypresses(state) {
                         // TODO : move selected object along Y axis 
                         object.model.position[1] -= 0.05;
                     } else {
-                        // TODO: move camera along Y axis
+                       if (state.camera.position[1] < 0.5){
+                        state.camera.position[1] = 0.5;
+                        state.camera.center[1] = 0.5;
+                       } else{
                         state.camera.position[1] -= 0.05;
                         state.camera.center[1] -= 0.05;
+                       }
+                       
+                        // TODO: move camera along Y axis
+                        
                     }
                 }
                 break;
-            case "Space":
-                // TODO: Highlight
-                if (!state.hasSelected) {
-                    state.hasSelected = true;
-                    changeSelectionText(state.objects[state.selectedIndex].name);
-                    // TODO scale object here 
-                    object.model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                }
-                else {
-                    state.hasSelected = false;
-                    document.getElementById("selectionText").innerHTML = "Selection: None";
-                    // TODO scale back object here 
-                    object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                }
-
+                case "ArrowUp":
+                currentSlotIndex = (currentSlotIndex - rowSize + boardSlots.length) % boardSlots.length;
+                break;
+            case "ArrowDown":
+                currentSlotIndex = (currentSlotIndex + rowSize) % boardSlots.length;
                 break;
             case "ArrowLeft":
-                // Decreases object selected index value
-                if (state.hasSelected) {
-                    if (state.selectedIndex > 0) {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex--;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    else if (state.selectedIndex == 0) {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex = state.objects.length - 1;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    else {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex--;
-                    }
-                    //changes the text to the object that is selected
-                    changeSelectionText(state.objects[state.selectedIndex].name);
-                }
+                currentSlotIndex = (currentSlotIndex - 1 + boardSlots.length) % boardSlots.length;
                 break;
             case "ArrowRight":
-                // Increases object selected index value
-                if (state.hasSelected) {
-                    if (state.selectedIndex < state.objects.length - 1) {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex++;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    else {
-                        //TODO: scale the selected object and descale the previously selected object, set state.selectedIndex to new value
-                        
-                        object.model.scale = vec3.fromValues(1.0, 1.0, 1.0);
-                        state.selectedIndex = 0;
-                        state.objects[state.selectedIndex].model.scale = vec3.fromValues(1.2, 1.2, 1.2);
-                    }
-                    changeSelectionText(state.objects[state.selectedIndex].name);
-                }
+                currentSlotIndex = (currentSlotIndex + 1) % boardSlots.length;
+                break;
+            case "PageUp":
+                currentSlotIndex = (currentSlotIndex - layerSize + boardSlots.length) % boardSlots.length;
+                break;
+            case "PageDown":
+                currentSlotIndex = (currentSlotIndex + layerSize) % boardSlots.length;
+                break;
+            case "Space":
+                spawnPyramid(gl,canvas,beams); 
+                break;
+                case "KeyR":
+                beams = beams.filter(object => {
+                    return object.name !== "Blue Pyramid" && object.name !== "Red Pyramid";
+                }); 
+                console.log("All pyramids have been removed!");
+                doDrawing(gl, canvas, beams); 
                 break;
             default:
                 break;
         }
+
     });
 
 
@@ -931,3 +1012,7 @@ function calculateCentroid(vertices) {
     return center;
 
 }
+
+
+
+
