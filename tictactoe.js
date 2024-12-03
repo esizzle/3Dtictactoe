@@ -345,15 +345,15 @@ for (let x = 0; x < gridSize; x++) {
         for (let z = 0; z < gridSize; z++) {
             boardSlots.push({
                 position: [x * slotSpacing, y * slotSpacing, z * slotSpacing],
-                occupied: null // Tracks whether the slot is occupied
+                occupied: null // tracks whether the slot is occupied
             });
         }
     }
 }
 
-// Add logic for spawning pyramids
-let currentSlotIndex = 0; // Tracks the selected slot
-let isBlueTurn = true; // Alternates between blue and red pyramids
+
+let currentSlotIndex = 0; 
+let isBlueTurn = true; // alternates between blue and red pyramids
 
 function spawnPyramid(gl,canvas, beams) {
     const currentSlot = boardSlots[currentSlotIndex];
@@ -584,10 +584,10 @@ function setupKeypresses(gl,state, canvas, beams) {
     
     
     keypressListener = function(event) {
-        console.log(event.code);
+        
         event.preventDefault();
 
-        console.log("Selected Slot Index:", currentSlotIndex);
+        
         
         
         switch (event.code) {
@@ -792,12 +792,26 @@ function setupKeypresses(gl,state, canvas, beams) {
            
             case "Space":
                 spawnPyramid(gl, canvas, beams);
+                beams = beams.filter(object => object.name !== "highlighted cube");
+                currentSlotIndex = (currentSlotIndex - layerSize + boardSlots.length) % boardSlots.length;
+                highlightIndex(gl, canvas, beams);
                 break;
 
             case "KeyR":
+                boardSlots.length = 0;
                 beams = beams.filter(object => {
                     return object.name !== "Blue Pyramid" && object.name !== "Red Pyramid";
                 });
+                for (let x = 0; x < gridSize; x++) {
+                    for (let y = 0; y < gridSize; y++) {
+                        for (let z = 0; z < gridSize; z++) {
+                            boardSlots.push({
+                                position: [x * slotSpacing, y * slotSpacing, z * slotSpacing],
+                                occupied: null // tracks whether the slot is occupied
+                            });
+                        }
+                    }
+                }
                 console.log("All pyramids have been removed!");
                 doDrawing(gl, canvas, beams);
                 break;
