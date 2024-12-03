@@ -4,9 +4,11 @@ main();
 /************************************
  * MAIN
  ************************************/
-
+var keypressListener = null;
 
 function main() {
+    console.log(keypressListener);
+    
 
     console.log("Setting up the canvas");
 
@@ -274,7 +276,7 @@ const cubeSize = 5;
      
       
     
-      
+        
       doDrawing(gl, canvas, framework.beams);
       
 }
@@ -571,229 +573,242 @@ function drawScene(gl, deltaTime, state) {
  ************************************/
 
 function setupKeypresses(gl,state, canvas, beams) {
-    const layerSize = 9; // 3x3 grid per layer
-    const rowSize = 3;
-
+    const rowSize=3;
+    const layerSize=9;
     
-
+    
+    if (keypressListener) {
+        document.removeEventListener("keydown", keypressListener);
+    }
         
     
     
-    document.addEventListener("keydown", (event) => {
+    keypressListener = function(event) {
         console.log(event.code);
         event.preventDefault();
 
         console.log("Selected Slot Index:", currentSlotIndex);
         
+        
         switch (event.code) {
             case "KeyA":
                 if (event.getModifierState("Shift")) {
                     if (state.hasSelected) {
-                        // TODO Rotate selected object around Y
+                        // Rotate selected object around Y
                         const rotationY = mat4.create();
                         mat4.rotateY(rotationY, rotationY, 0.1);
                         mat4.multiply(object.model.rotation, rotationY, object.model.rotation);
                     } else {
-                        // TODO Rotate camera around Y
+                        // Rotate camera around Y
                         const rotationMatrixA = mat4.create();
-                    const worldUpA = vec3.fromValues(0, 1, 0);
-                    mat4.rotate(rotationMatrixA, rotationMatrixA, 0.05, worldUpA);
+                        const worldUpA = vec3.fromValues(0, 1, 0);
+                        mat4.rotate(rotationMatrixA, rotationMatrixA, 0.05, worldUpA);
 
-                    const tempLookDirA = vec3.create();
-                    vec3.subtract(tempLookDirA, state.camera.center, state.camera.position);
-                    vec3.transformMat4(tempLookDirA, tempLookDirA, rotationMatrixA);
-                    vec3.normalize(tempLookDirA, tempLookDirA);
-                    vec3.add(state.camera.center, state.camera.position, tempLookDirA);
+                        const tempLookDirA = vec3.create();
+                        vec3.subtract(tempLookDirA, state.camera.center, state.camera.position);
+                        vec3.transformMat4(tempLookDirA, tempLookDirA, rotationMatrixA);
+                        vec3.normalize(tempLookDirA, tempLookDirA);
+                        vec3.add(state.camera.center, state.camera.position, tempLookDirA);
 
-                    const tempRightA = vec3.create();
-                    vec3.cross(tempRightA, tempLookDirA, state.camera.up);
-                    vec3.normalize(state.camera.right, tempRightA);
+                        const tempRightA = vec3.create();
+                        vec3.cross(tempRightA, tempLookDirA, state.camera.up);
+                        vec3.normalize(state.camera.right, tempRightA);
 
-                    vec3.cross(state.camera.up, state.camera.right, tempLookDirA);
-                    vec3.normalize(state.camera.up, state.camera.up);
-                        
-
+                        vec3.cross(state.camera.up, state.camera.right, tempLookDirA);
+                        vec3.normalize(state.camera.up, state.camera.up);
                     }
                 } else {
                     if (state.hasSelected) {
-                        // TODO: Move selected object along X axis
+                        // Move selected object along X axis
                         object.model.position[0] += 0.05;
                     } else {
-                        // TODO: Move camera along X axis
+                        // Move camera along X axis
                         state.camera.position[0] += 0.05;
                         state.camera.center[0] += 0.05;
                     }
                 }
                 break;
+
             case "KeyD":
                 if (event.getModifierState("Shift")) {
                     if (state.hasSelected) {
-                        // TODO Rotate selected object around Y (other direction)
+                        // Rotate selected object around Y (other direction)
                         const rotationY = mat4.create();
                         mat4.rotateY(rotationY, rotationY, -0.1);
                         mat4.multiply(object.model.rotation, rotationY, object.model.rotation);
                     } else {
-                        // TODO Rotate camera around Y (other direction)
+                        // Rotate camera around Y (other direction)
                         const rotationMatrixD = mat4.create();
-                    const worldUpD = vec3.fromValues(0, 1, 0);
-                    mat4.rotate(rotationMatrixD, rotationMatrixD, -0.05, worldUpD);
+                        const worldUpD = vec3.fromValues(0, 1, 0);
+                        mat4.rotate(rotationMatrixD, rotationMatrixD, -0.05, worldUpD);
 
-                    const tempLookDirD = vec3.create();
-                    vec3.subtract(tempLookDirD, state.camera.center, state.camera.position);
-                    vec3.transformMat4(tempLookDirD, tempLookDirD, rotationMatrixD);
-                    vec3.normalize(tempLookDirD, tempLookDirD);
-                    vec3.add(state.camera.center, state.camera.position, tempLookDirD);
+                        const tempLookDirD = vec3.create();
+                        vec3.subtract(tempLookDirD, state.camera.center, state.camera.position);
+                        vec3.transformMat4(tempLookDirD, tempLookDirD, rotationMatrixD);
+                        vec3.normalize(tempLookDirD, tempLookDirD);
+                        vec3.add(state.camera.center, state.camera.position, tempLookDirD);
 
-                    const tempRightD = vec3.create();
-                    vec3.cross(tempRightD, tempLookDirD, state.camera.up);
-                    vec3.normalize(state.camera.right, tempRightD);
+                        const tempRightD = vec3.create();
+                        vec3.cross(tempRightD, tempLookDirD, state.camera.up);
+                        vec3.normalize(state.camera.right, tempRightD);
 
-                    vec3.cross(state.camera.up, state.camera.right, tempLookDirD);
-                    vec3.normalize(state.camera.up, state.camera.up);
+                        vec3.cross(state.camera.up, state.camera.right, tempLookDirD);
+                        vec3.normalize(state.camera.up, state.camera.up);
                     }
                 } else {
                     if (state.hasSelected) {
-                        // TODO: Move selected object along X axis (other direction)
+                        // Move selected object along X axis (other direction)
                         object.model.position[0] -= 0.05;
                     } else {
-                        // TODO: Move camera along X axis (other direction)
+                        // Move camera along X axis (other direction)
                         state.camera.position[0] -= 0.05;
                         state.camera.center[0] -= 0.05;
                     }
                 }
                 break;
+
             case "KeyW":
                 if (event.getModifierState("Shift")) {
                     if (state.hasSelected) {
-                        // TODO: rotate selection forward and backward around view X
+                        // Rotate selection forward and backward around view X
                         const rotationX = mat4.create();
                         mat4.rotateX(rotationX, rotationX, 0.1);
                         mat4.multiply(object.model.rotation, rotationX, object.model.rotation);
                     } else {
-                        
-                        }
+                        // Rotate camera forward and backward
+                    }
                 } else {
                     if (state.hasSelected) {
-                        // TODO: Move selected object along Z axis
+                        // Move selected object along Z axis
                         object.model.position[2] += 0.05;
                     } else {
-                        // TODO: Move camera along Z axis
+                        // Move camera along Z axis
                         state.camera.position[2] += 0.05;
                         state.camera.center[2] += 0.05;
                     }
                 }
                 break;
+
             case "KeyS":
                 if (event.getModifierState("Shift")) {
                     if (state.hasSelected) {
-                        // TODO: rotate selection forward and backward around view X (other direction)
+                        // Rotate selection forward and backward around view X (other direction)
                         const rotationX = mat4.create();
                         mat4.rotateX(rotationX, rotationX, -0.1);
                         mat4.multiply(object.model.rotation, rotationX, object.model.rotation);
                     } else {
-                        // TODO: Rotate camera about X axis (pitch)
-                        
+                        // Rotate camera about X axis (pitch)
                     }
                 } else {
                     if (state.hasSelected) {
-                        // TODO: Move selected object along Z axis  (other direction)
+                        // Move selected object along Z axis (other direction)
                         object.model.position[2] -= 0.05;
                     } else {
-                        // TODO: Move camera along Z axis (other direction)
+                        // Move camera along Z axis (other direction)
                         state.camera.position[2] -= 0.05;
                         state.camera.center[2] -= 0.05;
-                        
                     }
                 }
                 break;
+
             case "KeyQ":
                 if (event.getModifierState("Shift")) {
                     if (state.hasSelected) {
-                        // TODO : rotate selected object around z axis
+                        // Rotate selected object around Z axis
                         const rotationZ = mat4.create();
                         mat4.rotateZ(rotationZ, rotationZ, 0.1);
                         mat4.multiply(object.model.rotation, rotationZ, object.model.rotation);
                     }
                 } else {
                     if (state.hasSelected) {
-                        // TODO : move selected object along Y axis 
+                        // Move selected object along Y axis
                         object.model.position[1] += 0.05;
                     } else {
-                        // TODO: move camera along Y axis
+                        // Move camera along Y axis
                         state.camera.position[1] += 0.05;
                         state.camera.center[1] += 0.05;
                     }
                 }
-
                 break;
+
             case "KeyE":
                 if (event.getModifierState("Shift")) {
                     if (state.hasSelected) {
-                        // TODO : rotate selected object around z axis
+                        // Rotate selected object around Z axis
                         const rotationZ = mat4.create();
                         mat4.rotateZ(rotationZ, rotationZ, -0.1);
                         mat4.multiply(object.model.rotation, rotationZ, object.model.rotation);
                     }
                 } else {
                     if (state.hasSelected) {
-                        // TODO : move selected object along Y axis 
+                        // Move selected object along Y axis
                         object.model.position[1] -= 0.05;
                     } else {
-                       if (state.camera.position[1] < 0.5){
-                        state.camera.position[1] = 0.5;
-                        state.camera.center[1] = 0.5;
-                       } else{
-                        state.camera.position[1] -= 0.05;
-                        state.camera.center[1] -= 0.05;
-                       }
-                       
-                        // TODO: move camera along Y axis
-                        
+                        if (state.camera.position[1] < 0.5) {
+                            state.camera.position[1] = 0.5;
+                            state.camera.center[1] = 0.5;
+                        } else {
+                            state.camera.position[1] -= 0.05;
+                            state.camera.center[1] -= 0.05;
+                        }
                     }
                 }
                 break;
-            case "ArrowLeft":
-                beams = beams.filter(object => {
-                    return object.name !== "highlighted cube";
-                }); 
-                currentSlotIndex -= 1;
-                if (currentSlotIndex == -1) {
-                    currentSlotIndex = 26;
-                }
+                case "ArrowUp":
+                    beams = beams.filter(object => object.name !== "highlighted cube");
+                    currentSlotIndex = (currentSlotIndex + rowSize) % boardSlots.length;
+                    highlightIndex(gl, canvas, beams);
+                    break;
+                case "ArrowDown":
+                    beams = beams.filter(object => object.name !== "highlighted cube");
+                    currentSlotIndex = (currentSlotIndex - rowSize + boardSlots.length) % boardSlots.length;
+                    highlightIndex(gl, canvas, beams);
+                    break;
+                case "ArrowLeft":
+                    beams = beams.filter(object => object.name !== "highlighted cube");
+                    currentSlotIndex = (currentSlotIndex + layerSize) % boardSlots.length;
+                   
+                    highlightIndex(gl, canvas, beams);
+                    break;
+                case "ArrowRight":
+                    beams = beams.filter(object => object.name !== "highlighted cube");
+                    currentSlotIndex = (currentSlotIndex - layerSize + boardSlots.length) % boardSlots.length;
+                    
+                    highlightIndex(gl, canvas, beams);
+                    break;
+                case "PageUp":
+                    beams = beams.filter(object => object.name !== "highlighted cube");
+                    currentSlotIndex = (currentSlotIndex + 1) % boardSlots.length;
+                    
+                    highlightIndex(gl, canvas, beams);
+                    break;
+                case "PageDown":
+                    beams = beams.filter(object => object.name !== "highlighted cube");
+                    currentSlotIndex = (currentSlotIndex - 1 + boardSlots.length) % boardSlots.length;
+                    
+                    highlightIndex(gl, canvas, beams);
+                    break;
 
-                highlightIndex(gl,canvas,beams);
-                break;
-            case "ArrowRight":
-                beams = beams.filter(object => {
-                    return object.name !== "highlighted cube";
-                }); 
-                currentSlotIndex += 1;
-                if (currentSlotIndex == 27) {
-                    currentSlotIndex = 0;
-                }
-                highlightIndex(gl,canvas,beams);
-                break;
-          
+           
             case "Space":
-                spawnPyramid(gl,canvas,beams); 
+                spawnPyramid(gl, canvas, beams);
                 break;
-                case "KeyR":
-                    
-                    
-                    beams = beams.filter(object => {
+
+            case "KeyR":
+                beams = beams.filter(object => {
                     return object.name !== "Blue Pyramid" && object.name !== "Red Pyramid";
-                    
-                }); 
+                });
                 console.log("All pyramids have been removed!");
-                doDrawing(gl, canvas, beams); 
+                doDrawing(gl, canvas, beams);
                 break;
+
             default:
                 break;
         }
+    };
 
-    });
-
-
+    // Add the new listener after setup
+    document.addEventListener("keydown", keypressListener);
 }
 
 /************************************
